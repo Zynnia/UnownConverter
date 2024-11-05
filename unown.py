@@ -14,7 +14,7 @@ def resize(imagePath, fontSize):
 def stitch(imagePath):
 
     # resize the images
-    images = [resize(path, 32) for path in imagePath]
+    images = [Image.open(path) for path in imagePath]
 
     #We want a line to store only 10 characters
     WIDTH = images[0].width * 10
@@ -24,12 +24,9 @@ def stitch(imagePath):
     then multiply by the image height.
     """
     n = len(images)  # grab number of characters
-    line = 0
+    
     #divide character by the 10 character limit per line to get line number.
-    if n % 10 == 0: 
-        line = n / 10
-    else:
-        line = n//10 + 1
+    line = int(n / 10) if n % 10 == 0 else (int(n / 10) + 1)
 
     HEIGHT = line * images[0].height
 
@@ -59,11 +56,33 @@ def stitch(imagePath):
     return stitchedImage
     
 
-def main():
-    file = "unown"
+def convert(user, asciiToUnown):
+    if not user:
+        raise ValueError("Input Error: Empty String")
 
-    #set the letter to the path of the unown
+    user = user.upper()
+
+    #Will use token at some point
+    #token = list(user.split())
+    sol = []
+    for x in user:
+        if x in asciiToUnown:
+            sol.append(asciiToUnown[x])
+
+    if not sol:
+        raise ValueError("Input Error: No valid string")
+
+    """
+    Stitch the image then save and show user.
+    """
+    result = stitch(sol)
+    return result
+   
+def initAsciiToUnown():
+    folderName = "unown"
+    #set the letter to the path of the unown 
     listOfUnown = []
+    #create a list if alphabet and punctuation
     listOfAlphabet = list(string.ascii_uppercase) + ['!', '?', ' ', '-']
 
     for val in listOfAlphabet:
@@ -78,24 +97,23 @@ def main():
         else:
             fileName = val + ".png"
         
-        listOfUnown.append(os.path.join(file, fileName))
+        listOfUnown.append(os.path.join(folderName, fileName))
 
+    #create hashtable of alphabet to unknown
     asciiToUnown = dict(zip(listOfAlphabet, listOfUnown))
+    
+    return asciiToUnown
 
-    user = input("What would you like to convert?:  ")
-    user = user.upper()
+def main():
 
-    #Will use token at some point
-    #token = list(user.split())
-    sol = []
-    for x in user:
-        if x in asciiToUnown:
-            sol.append(asciiToUnown[x])
-
-    result = stitch(sol)
-    result.save('unown.png')
-    result.show()
-
+    asciiToUnown = initAsciiToUnown()    
+    try:
+        user = input("What would you like to convert?:  ")
+        result = convert(user, asciiToUnown)
+        result.save('unown.png')
+        result.show()
+    except ValueError as e:
+        print(e)
 
 if __name__ == "__main__":
     main()
