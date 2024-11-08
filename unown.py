@@ -2,15 +2,7 @@ import os
 import string
 from PIL import Image
 
-
-def resize(imagePath, fontSize):
-    with Image.open(imagePath) as img:
-        dpi = 130
-        height = int((fontSize/72) * dpi)
-        newSize = (int(img.width * (height / img.height)), height)
-        return img.resize(newSize)
-
-
+# Function will create the images consisting of unowns
 def stitch(imagePath):
 
     # resize the images
@@ -55,7 +47,7 @@ def stitch(imagePath):
 
     return stitchedImage
     
-
+# Function will convert user input to corresponding unowns
 def convert(user, asciiToUnown):
     if not user:
         raise ValueError("Input Error: Empty String")
@@ -77,7 +69,8 @@ def convert(user, asciiToUnown):
     """
     result = stitch(sol)
     return result
-   
+
+ #Function to create a dictionary of latin alphabet to unowns  
 def initAsciiToUnown():
     folderName = "unown"
     #set the letter to the path of the unown 
